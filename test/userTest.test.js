@@ -13,7 +13,7 @@ describe('Login API Tests', () => {
       const newUser = {
         firstName: 'keza',
         lastName: 'kiriku',
-        email: 'kiriku4@example.com',
+        email: 'tttt2@example.com',
         birthOfDate: new Date('1990-01-01T00:00:00.000Z'), // Assuming birthOfDate is a date
         preferredLanguage: 'English',
         preferredCurrency: 'USD',
@@ -23,7 +23,7 @@ describe('Login API Tests', () => {
         lineManager: 'Jane Smith',
         gender: 'Male',
         telephoneNumber: '1234567890',
-        password: 'SecurePassword123' // Password field
+        password: 'Password123' // Password field
       };
   
       chai
@@ -44,12 +44,12 @@ describe('Login API Tests', () => {
     });
   
     // Additional test cases can be added here...
-  });
+
 
     it('should log in successfully with valid credentials', (done) => {
       const validUser = {
-        email: 'kiriku4@example.com',
-        password: 'SecurePassword123'
+        email: 'tttt2@example.com',
+        password: 'Password123'
       };
   
       chai
@@ -85,4 +85,5 @@ describe('Login API Tests', () => {
       });
     
 
-  
+    });
+    
