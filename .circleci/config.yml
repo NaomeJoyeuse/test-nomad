@@ -31,14 +31,15 @@ jobs:
             done
             echo Failed waiting for PostgreSQL && exit 1
       - run:
+          name: Fix Permissions
+          command: |
+            chmod +x node_modules/.bin/mocha
+            chmod +x ./node_modules/.bin/nyc
+            chmod +x ./node_modules/.bin/sequelize
+            chmod +x ./node_modules/.bin/sequelize-cli
+      - run:
           name: Run Database Migrations
           command: npx sequelize-cli db:migrate
-      - run:
-          name: Fix Permissions for Mocha
-          command: chmod +x node_modules/.bin/mocha
-      - run:
-          name: Fix Permissions for NYC
-          command: chmod +x ./node_modules/.bin/nyc
       - run:
           name: Run Tests
           command: npm test  
