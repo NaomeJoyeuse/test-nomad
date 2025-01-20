@@ -13,7 +13,7 @@ describe('Login API Tests', () => {
       const newUser = {
         firstName: 'keza',
         lastName: 'kiriku',
-        email: 'kiriku3@example.com',
+        email: 'kiriku4@example.com',
         birthOfDate: new Date('1990-01-01T00:00:00.000Z'), // Assuming birthOfDate is a date
         preferredLanguage: 'English',
         preferredCurrency: 'USD',
@@ -48,7 +48,7 @@ describe('Login API Tests', () => {
 
     it('should log in successfully with valid credentials', (done) => {
       const validUser = {
-        email: 'kiriku@example.com',
+        email: 'kiriku4@example.com',
         password: 'SecurePassword123'
       };
   

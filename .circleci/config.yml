@@ -38,9 +38,6 @@ jobs:
             chmod +x ./node_modules/.bin/sequelize
             chmod +x ./node_modules/.bin/sequelize-cli
       - run:
-          name: Run Database Migrations
-          command: npx sequelize-cli db:migrate
-      - run:
           name: Run Tests
           command: npm test  
       - run:
