@@ -1,58 +1,93 @@
+# version: 2.1
+# jobs:
+#   build_and_test:
+#     docker:
+#       - image: circleci/node:16
+#         environment:
+#           POSTGRES_DB: test_nomad
+#           POSTGRES_USER: postgres
+#           POSTGRES_PASSWORD: 1234
+#           POSTGRES_HOST: localhost
+#       - image: circleci/postgres:13
+#         environment:
+#           POSTGRES_DB: test_nomad
+#           POSTGRES_USER: postgres
+#           POSTGRES_PASSWORD: 1234
+#     steps:
+#       - checkout 
+#       - run:
+#           name: Install Dependencies
+#           command: |
+#             npm install
+#             npm install coveralls --save-dev
+#       - run:
+#           name: Wait for PostgreSQL
+#           command: |
+#             for i in `seq 1 10`;
+#             do
+#               nc -z localhost 5432 && echo Success && exit 0
+#               echo -n .
+#               sleep 1
+#             done
+#             echo Failed waiting for PostgreSQL && exit 1
+#       - run:
+#           name: Fix Permissions
+#           command: |
+#             chmod +x node_modules/.bin/mocha
+#             chmod +x ./node_modules/.bin/nyc
+#             chmod +x ./node_modules/.bin/sequelize
+#             chmod +x ./node_modules/.bin/sequelize-cli
+#       - run:
+#           name: Run Database Migrations
+#           command: npx sequelize-cli db:migrate
+#       - run:
+#           name: Run Tests
+#           command: npm test  
+#       - run:
+#           name: Build app
+#           command: npm run build  
+#       - run:
+#           name: Generate Coverage Report
+#           command: npm test -- --coverage
+#       - run:
+#           name: Upload Coverage to Coveralls
+#           command: |
+#             cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+
+# workflows:
+#   version: 2
+#   build:
+#     jobs:
+#       - build_and_test
+
+
 version: 2.1
 jobs:
   build_and_test:
-    docker:
-      - image: circleci/node:16
-        environment:
-          POSTGRES_DB: test_nomad
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 1234
-          POSTGRES_HOST: localhost
-      - image: circleci/postgres:13
-        environment:
-          POSTGRES_DB: test_nomad
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 1234
+    machine:
+      image: ubuntu-2004:current
     steps:
-      - checkout 
+      - checkout
       - run:
-          name: Install Dependencies
-          command: |
-            npm install
-            npm install coveralls --save-dev
+          name: Start Docker containers
+          command: docker-compose up -d
       - run:
-          name: Wait for PostgreSQL
-          command: |
-            for i in `seq 1 10`;
-            do
-              nc -z localhost 5432 && echo Success && exit 0
-              echo -n .
-              sleep 1
-            done
-            echo Failed waiting for PostgreSQL && exit 1
+          name: Wait for containers
+          command: sleep 15
       - run:
-          name: Fix Permissions
-          command: |
-            chmod +x node_modules/.bin/mocha
-            chmod +x ./node_modules/.bin/nyc
-            chmod +x ./node_modules/.bin/sequelize
-            chmod +x ./node_modules/.bin/sequelize-cli
-      - run:
-          name: Run Database Migrations
-          command: npx sequelize-cli db:migrate
-      - run:
-          name: Run Tests
-          command: npm test  
-      - run:
-          name: Build app
-          command: npm run build  
+          name: Run tests in Docker container
+          command: docker-compose exec -T backend npm test
       - run:
           name: Generate Coverage Report
-          command: npm test -- --coverage
+          command: docker-compose exec -T backend npm test -- --coverage
       - run:
           name: Upload Coverage to Coveralls
           command: |
-            cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+            docker-compose exec -T backend cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+      - run:
+          name: Stop containers
+          command: docker-compose down
+          when: always
 
 workflows:
   version: 2
