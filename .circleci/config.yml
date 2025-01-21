@@ -60,7 +60,6 @@
 #     jobs:
 #       - build_and_test
 
-
 version: 2.1
 jobs:
   build_and_test:
@@ -74,6 +73,11 @@ jobs:
       - run:
           name: Wait for containers
           command: sleep 15
+      - run:
+          name: Fix Permissions
+          command: |
+            docker-compose exec -T backend chmod +x node_modules/.bin/mocha
+            docker-compose exec -T backend chmod +x ./node_modules/.bin/nyc        
       - run:
           name: Run tests in Docker container
           command: docker-compose exec -T backend npm test
